@@ -1,1 +1,170 @@
 # Kafka-Cluster-on-Kubernetes
+
+This repo consists of information about how to install a Kafka cluster on
+Kubernetes (specifically, [docker-for-desktop](https://medium.com/containers-101/local-kubernetes-for-mac-minikube-vs-docker-desktop-f2789b3cad3a)
+version) and several scenarios for a full testing of Kafka's capabilities.
+
+## Getting Started
+
+### Prerequisites
+
+Install [Docker](https://www.docker.com/), [Helm](https://helm.sh/) and [Kafkacat](https://github.com/edenhill/kafkacat).
+
+### Installing
+
+Add repo to install the chart:
+
+```bash
+~$ helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
+```
+
+Before you install the chart with the release name `my-kafka`, initialize Helm:
+
+```bash
+~$ helm init --wait
+$HELM_HOME has been configured at /Users/<your_user>/.helm.
+
+Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+
+Please note: by default, Tiller is deployed with an insecure 'allow unauthenticated users' policy.
+To prevent this, run `helm init` with the --tiller-tls-verify flag.
+For more information on securing your installation see: https://docs.helm.sh/using_helm/#securing-your-helm-installation
+Happy Helming!
+```
+
+You should see `Happy Helming!`. Helm has two parts: Helm (client) and Tiller (server),
+which should be now running on Kubernetes as given below:
+
+```bash
+~$ kubectl -n kube-system get pods
+NAME                                         READY   STATUS    RESTARTS   AGE
+etcd-docker-for-desktop                      1/1     Running   0          60d
+kube-apiserver-docker-for-desktop            1/1     Running   0          60d
+kube-controller-manager-docker-for-desktop   1/1     Running   0          60d
+kube-dns-86f4d74b45-kls2d                    3/3     Running   0          60d
+kube-proxy-zpcbr                             1/1     Running   0          60d
+kube-scheduler-docker-for-desktop            1/1     Running   0          60d
+kubernetes-dashboard-7b9c7bc8c9-pc5wm        1/1     Running   1          60d
+tiller-deploy-9cb565677-fnm2b                1/1     Running   0          19s
+```
+
+`tiller-deploy-9cb565677-fnm2b` is now running.
+
+Now, we are able to install Kafka:
+
+```bash
+~$ helm install --name my-kafka incubator/kafka
+NAME:   my-kafka
+LAST DEPLOYED: Mon Mar 18 18:45:23 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+
+RESOURCES:
+==> v1/Pod(related)
+NAME                  READY  STATUS             RESTARTS  AGE
+my-kafka-0            0/1    Pending            0         0s
+my-kafka-zookeeper-0  0/1    ContainerCreating  0         0s
+
+==> v1/Service
+NAME                         TYPE       CLUSTER-IP      EXTERNAL-IP  PORT(S)                     AGE
+my-kafka                     ClusterIP  10.97.248.107   <none>       9092/TCP                    0s
+my-kafka-headless            ClusterIP  None            <none>       9092/TCP                    0s
+my-kafka-zookeeper           ClusterIP  10.104.105.157  <none>       2181/TCP                    0s
+my-kafka-zookeeper-headless  ClusterIP  None            <none>       2181/TCP,3888/TCP,2888/TCP  0s
+
+==> v1beta1/PodDisruptionBudget
+NAME                MIN AVAILABLE  MAX UNAVAILABLE  ALLOWED DISRUPTIONS  AGE
+my-kafka-zookeeper  N/A            1                0                    0s
+
+==> v1beta1/StatefulSet
+NAME                READY  AGE
+my-kafka            0/3    0s
+my-kafka-zookeeper  0/3    0s
+
+
+NOTES:
+### Connecting to Kafka from inside Kubernetes
+
+You can connect to Kafka by running a simple pod in the K8s cluster like this with a configuration like this:
+
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: testclient
+    namespace: default
+  spec:
+    containers:
+    - name: kafka
+      image: confluentinc/cp-kafka:5.0.1
+      command:
+        - sh
+        - -c
+        - "exec tail -f /dev/null"
+
+Once you have the testclient pod above running, you can list all kafka
+topics with:
+
+  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --list
+n
+To create a new topic:
+
+  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --topic test1 --create --partitions 1 --replication-factor 1
+
+To listen for messages on a topic:
+
+  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server my-kafka:9092 --topic test1 --from-beginning
+
+To stop the listener session above press: Ctrl+C
+
+To start an interactive message producer session:
+  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-producer.sh --broker-list my-kafka-headless:9092 --topic test1
+
+To create a message in the above session, simply type the message and press "enter"
+To end the producer session try: Ctrl+C
+```
+
+This provides us a mode to test Kafka. You can choose this or you can use Kafkacat as given below.
+
+If using a dedicated namespace(recommended) then make sure the namespace exists with:
+
+```bash
+~$ kubectl create ns kafka
+~$ helm install --name my-kafka --namespace kafka incubator/kafka
+```
+
+Now, you should have three Kafka replicas and three Zookeeper replicas which make up the cluster:
+
+```bash
+~$ kubectl get pods
+NAME                   READY   STATUS    RESTARTS   AGE
+my-kafka-0             1/1     Running   0          16m
+my-kafka-1             1/1     Running   0          14m
+my-kafka-2             1/1     Running   0          13m
+my-kafka-zookeeper-0   1/1     Running   0          16m
+my-kafka-zookeeper-1   1/1     Running   0          15m
+my-kafka-zookeeper-2   1/1     Running   0          14m
+```
+
+### Deleting
+
+_under construction_
+
+## Running the tests
+
+We need to expose Kafka:
+
+```bash
+~$ k port-forward my-kafka-1 9092:9092
+```
+
+In other console tab:
+
+```bash
+~$ kafkacat -L -b localhost
+Metadata for all topics (from broker -1: localhost:9092/bootstrap):
+ 3 brokers:
+  broker 2 at my-kafka-2.my-kafka-headless.default:9092
+  broker 1 at my-kafka-1.my-kafka-headless.default:9092
+  broker 0 at my-kafka-0.my-kafka-headless.default:9092
+ 0 topics:
+```
