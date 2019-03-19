@@ -145,9 +145,142 @@ my-kafka-zookeeper-1   1/1     Running   0          15m
 my-kafka-zookeeper-2   1/1     Running   0          14m
 ```
 
+### Listing
+
+```bash
+~$ helm ls
+NAME    	REVISION	UPDATED                 	STATUS  	CHART        	APP VERSION	NAMESPACE
+my-kafka	1       	Mon Mar 18 18:45:23 2019	DEPLOYED	kafka-0.13.11	5.0.1      	default  
+```
+
+### Scaling
+
+```bash
+helm status my-kafka   
+LAST DEPLOYED: Tue Mar 19 17:04:55 2019
+NAMESPACE: default
+STATUS: DEPLOYED
+
+RESOURCES:
+==> v1/Pod(related)
+NAME                  READY  STATUS   RESTARTS  AGE
+my-kafka-0            0/1    Running  1         82s
+my-kafka-zookeeper-0  1/1    Running  0         82s
+my-kafka-zookeeper-1  1/1    Running  0         51s
+my-kafka-zookeeper-2  1/1    Running  0         28s
+
+==> v1/Service
+NAME                         TYPE       CLUSTER-IP      EXTERNAL-IP  PORT(S)                     AGE
+my-kafka                     ClusterIP  10.107.14.94    <none>       9092/TCP                    82s
+my-kafka-headless            ClusterIP  None            <none>       9092/TCP                    82s
+my-kafka-zookeeper           ClusterIP  10.103.237.247  <none>       2181/TCP                    82s
+my-kafka-zookeeper-headless  ClusterIP  None            <none>       2181/TCP,3888/TCP,2888/TCP  82s
+
+==> v1beta1/PodDisruptionBudget
+NAME                MIN AVAILABLE  MAX UNAVAILABLE  ALLOWED DISRUPTIONS  AGE
+my-kafka-zookeeper  N/A            1                1                    82s
+
+==> v1beta1/StatefulSet
+NAME                READY  AGE
+my-kafka            0/3    82s
+my-kafka-zookeeper  3/3    82s
+
+
+NOTES:
+### Connecting to Kafka from inside Kubernetes
+
+You can connect to Kafka by running a simple pod in the K8s cluster like this with a configuration like this:
+
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: testclient
+    namespace: default
+  spec:
+    containers:
+    - name: kafka
+      image: confluentinc/cp-kafka:5.0.1
+      command:
+        - sh
+        - -c
+        - "exec tail -f /dev/null"
+
+Once you have the testclient pod above running, you can list all kafka
+topics with:
+
+  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --list
+n
+To create a new topic:
+
+  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --topic test1 --create --partitions 1 --replication-factor 1
+
+To listen for messages on a topic:
+
+  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server my-kafka:9092 --topic test1 --from-beginning
+
+To stop the listener session above press: Ctrl+C
+
+To start an interactive message producer session:
+  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-producer.sh --broker-list my-kafka-headless:9092 --topic test1
+
+To create a message in the above session, simply type the message and press "enter"
+To end the producer session try: Ctrl+C
+```
+
+Take a look into `StatefulSet`:
+
+```
+==> v1beta1/StatefulSet
+NAME                READY  AGE
+my-kafka            0/3    82s
+my-kafka-zookeeper  3/3    82s
+```
+
+For scaling, run following command:
+
+```bash
+~$ kubectl scale --replicas 1 StatefulSet/my-kafka
+```
+
+Change replicas number according you need.
+
+```bash
+~$ kubectl get pods
+NAME                   READY   STATUS    RESTARTS   AGE
+my-kafka-0             1/1     Running   1          6m
+my-kafka-zookeeper-0   1/1     Running   0          6m
+my-kafka-zookeeper-1   1/1     Running   0          5m
+my-kafka-zookeeper-2   1/1     Running   0          5m
+```
+
+If you want to scale Zookeeper run the following command:
+
+```bash
+~$ kubectl scale --replicas 1 StatefulSet/my-kafka-zookeeper
+```
+
+The result is as given below:
+
+```bash
+~$ kubectl get pods                                         
+NAME                   READY   STATUS    RESTARTS   AGE
+my-kafka-0             1/1     Running   1          8m
+my-kafka-zookeeper-0   1/1     Running   0          8m
+```
+
+Now, you can configure your test environment.
+
 ### Deleting
 
-_under construction_
+```bash
+~$ helm delete my-kafka
+```
+
+If you get that service already exists, use `--purge` for deleting after re-install chart:
+
+```bash
+~$ helm del --purge my-kafka
+```
 
 ## Running the tests
 
