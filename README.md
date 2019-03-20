@@ -10,6 +10,17 @@ version) and several scenarios for a full testing of Kafka's capabilities.
 
 Install [Docker](https://www.docker.com/), [Helm](https://helm.sh/) and [Kafkacat](https://github.com/edenhill/kafkacat).
 
+**Configure the memory of Docker** by default Docker limits itself to 4G of memory,
+for this project this is often too little, you can increase it to 8G by going
+to _Docker >> Preferences >> Advanced >> change the Memory_.
+
+**Enable Kubernetes** In Docker go to the preferences and to the tab Kubernetes
+and check Enable Kubernetes This will install and start Kubernetes. Click on the Docker icon
+to view the status of Kubernets.
+
+**NOTE**: if you are already connected to an environment make sure to switch back to your local environment before you run
+below scripts running `kubectl config use-context docker-for-desktop`
+
 ### Installing
 
 Add repo to install the chart:
@@ -259,6 +270,12 @@ bar
 EOF
 ```
 
+In addition, if you want to publish just a message:
+
+```bash
+~$ echo "foo" | kafkacat -P -b localhost:9092 -t myTopic
+```
+
 * Consuming messages from a topic
 
 ```bash
@@ -282,3 +299,10 @@ Or, without keys:
 foo
 bar
 ```
+
+## Built with
+
+* [Docker](https://www.docker.com/)
+* [Kubernetes](https://kubernetes.io/)
+* [Helm](https://helm.sh/)
+* [Kafkacat](https://github.com/edenhill/kafkacat)
