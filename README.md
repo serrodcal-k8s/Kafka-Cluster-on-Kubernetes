@@ -238,22 +238,31 @@ Once you are in testclient pod, test as given below:
 * List all Kafka topics:
 
 ```bash
-/\# kafkacat -b my-kafka:9092 -L
+/# kafkacat -b my-kafka:9092 -L
 ```
 
 * Producing messages inline from a script:
 
 ```bash
-/\# kafkacat -b my-kafka:9092 -t test -K: -P \<<EOF
+/# kafkacat -b my-kafka:9092 -t test -K: -P <<EOF
 1: FOO
 2: BAR
+EOF
+```
+
+Or, without keys:
+
+```bash
+/\# kafkacat -P -b my-kafka:9092 -t myTopic <<EOF
+foo
+bar
 EOF
 ```
 
 * Consuming messages from a topic
 
 ```bash
-/\# kafkacat -b my-kafka:9092 -C -K: -f '\nKey (%K bytes): %k\t\nValue (%S bytes): %s\n\Partition: %p\tOffset: %o\n--\n' -t test
+/# kafkacat -b my-kafka:9092 -C -K: -f '\nKey (%K bytes): %k\t\nValue (%S bytes): %s\n\Partition: %p\tOffset: %o\n--\n' -t test
 
 Key (1 bytes): 1
 Value (4 bytes):  FOO
@@ -264,4 +273,12 @@ Key (1 bytes): 2
 Value (4 bytes):  BAR
 Partition: 0	Offset: 1
 --
+```
+
+Or, without keys:
+
+```bash
+/# kafkacat -C -b my-kafka:9092 -t myTopic
+foo
+bar
 ```
