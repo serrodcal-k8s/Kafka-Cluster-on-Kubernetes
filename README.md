@@ -80,47 +80,6 @@ my-kafka-zookeeper  N/A            1                0                    0s
 NAME                READY  AGE
 my-kafka            0/3    0s
 my-kafka-zookeeper  0/3    0s
-
-
-NOTES:
-### Connecting to Kafka from inside Kubernetes
-
-You can connect to Kafka by running a simple pod in the K8s cluster like this with a configuration like this:
-
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: testclient
-    namespace: default
-  spec:
-    containers:
-    - name: kafka
-      image: confluentinc/cp-kafka:5.0.1
-      command:
-        - sh
-        - -c
-        - "exec tail -f /dev/null"
-
-Once you have the testclient pod above running, you can list all kafka
-topics with:
-
-  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --list
-n
-To create a new topic:
-
-  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --topic test1 --create --partitions 1 --replication-factor 1
-
-To listen for messages on a topic:
-
-  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server my-kafka:9092 --topic test1 --from-beginning
-
-To stop the listener session above press: Ctrl+C
-
-To start an interactive message producer session:
-  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-producer.sh --broker-list my-kafka-headless:9092 --topic test1
-
-To create a message in the above session, simply type the message and press "enter"
-To end the producer session try: Ctrl+C
 ```
 
 This provides us a mode to test Kafka. You can choose this or you can use Kafkacat as given below.
@@ -184,47 +143,6 @@ my-kafka-zookeeper  N/A            1                1                    82s
 NAME                READY  AGE
 my-kafka            0/3    82s
 my-kafka-zookeeper  3/3    82s
-
-
-NOTES:
-### Connecting to Kafka from inside Kubernetes
-
-You can connect to Kafka by running a simple pod in the K8s cluster like this with a configuration like this:
-
-  apiVersion: v1
-  kind: Pod
-  metadata:
-    name: testclient
-    namespace: default
-  spec:
-    containers:
-    - name: kafka
-      image: confluentinc/cp-kafka:5.0.1
-      command:
-        - sh
-        - -c
-        - "exec tail -f /dev/null"
-
-Once you have the testclient pod above running, you can list all kafka
-topics with:
-
-  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --list
-n
-To create a new topic:
-
-  kubectl -n default exec testclient -- /opt/kafka/bin/kafka-topics.sh --zookeeper my-kafka-zookeeper:2181 --topic test1 --create --partitions 1 --replication-factor 1
-
-To listen for messages on a topic:
-
-  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server my-kafka:9092 --topic test1 --from-beginning
-
-To stop the listener session above press: Ctrl+C
-
-To start an interactive message producer session:
-  kubectl -n default exec -ti testclient -- /opt/kafka/bin/kafka-console-producer.sh --broker-list my-kafka-headless:9092 --topic test1
-
-To create a message in the above session, simply type the message and press "enter"
-To end the producer session try: Ctrl+C
 ```
 
 Take a look into `StatefulSet`:
@@ -284,20 +202,66 @@ If you get that service already exists, use `--purge` for deleting after re-inst
 
 ## Running the tests
 
-We need to expose Kafka:
+Create a test pod. Save following code as file (for instance, save as `testclient.yml`):
 
 ```bash
-~$ k port-forward my-kafka-1 9092:9092
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testclient
+  namespace: default
+spec:
+  containers:
+  - name: kafka
+    image: confluentinc/cp-kafkacat
+    imagePullPolicy: IfNotPresent
+    command:
+      - sh
+      - -c
+      - "exec tail -f /dev/null"
 ```
 
-In other console tab:
+Create testclient pod:
 
 ```bash
-~$ kafkacat -L -b localhost
-Metadata for all topics (from broker -1: localhost:9092/bootstrap):
- 3 brokers:
-  broker 2 at my-kafka-2.my-kafka-headless.default:9092
-  broker 1 at my-kafka-1.my-kafka-headless.default:9092
-  broker 0 at my-kafka-0.my-kafka-headless.default:9092
- 0 topics:
+~$ kubectl create -f testclient.yml
+```
+
+Get into testclient pod for testing:
+
+```bash
+~$ kubectl exec -ti testclient -- bash
+```
+
+Once you are in testclient pod, test as given below:
+
+* List all Kafka topics:
+
+```bash
+/\# kafkacat -b my-kafka:9092 -L
+```
+
+* Producing messages inline from a script:
+
+```bash
+/\# kafkacat -b my-kafka:9092 -t test -K: -P \<<EOF
+1: FOO
+2: BAR
+EOF
+```
+
+* Consuming messages from a topic
+
+```bash
+/\# kafkacat -b my-kafka:9092 -C -K: -f '\nKey (%K bytes): %k\t\nValue (%S bytes): %s\n\Partition: %p\tOffset: %o\n--\n' -t test
+
+Key (1 bytes): 1
+Value (4 bytes):  FOO
+Partition: 0	Offset: 0
+--
+
+Key (1 bytes): 2
+Value (4 bytes):  BAR
+Partition: 0	Offset: 1
+--
 ```
