@@ -273,7 +273,7 @@ EOF
 In addition, if you want to publish just a message:
 
 ```bash
-~$ echo "foo" | kafkacat -P -b localhost:9092 -t myTopic
+~$ echo "foo" | kafkacat -P -b my-kafka:9092 -t myTopic
 ```
 
 * Consuming messages from a topic
