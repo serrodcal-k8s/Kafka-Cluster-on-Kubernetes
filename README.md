@@ -300,6 +300,10 @@ foo
 bar
 ```
 
+## Running simple consumer and producer
+
+Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md) and [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md)) documentations in order to deploy a simple producer and consumer.
+
 ## Built with
 
 * [Docker](https://www.docker.com/)
