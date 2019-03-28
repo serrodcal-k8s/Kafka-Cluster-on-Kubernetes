@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: consumer
+  namespace: default
+spec:
+  containers:
+  - name: consumer
+    image: serrodcal/kafka-consumer:0.1.0
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: BOOTSTRAPSERVERS
+      value: "my-kafka:9092"
+    - name: CONSUMER_GROUP_ID
+      value: "group1"

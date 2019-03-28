@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: producer
+  namespace: default
+spec:
+  containers:
+  - name: producer
+    image: serrodcal/kafka-producer:0.1.0
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: BOOTSTRAPSERVERS
+      value: "my-kafka:9092"
+    - name: PARALLELISM
+      value: 100
