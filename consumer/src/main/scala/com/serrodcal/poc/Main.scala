@@ -24,8 +24,10 @@ object Main extends App {
   val consumerSettings =
           ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
 
+  val topic = config.getString("topic")
+
   val done = Consumer
-          .plainSource(consumerSettings, Subscriptions.topics("topic"))
+          .plainSource(consumerSettings, Subscriptions.topics(topic))
           .runWith(Sink.foreach(println)) // just print each message for debugging
 
   implicit val ec: ExecutionContextExecutor = system.dispatcher

@@ -23,10 +23,12 @@ object Main extends App {
   val producerSettings =
     ProducerSettings(system, new StringSerializer, new StringSerializer)
 
+  val topic = config.getString("topic")
+
   val done: Future[Done] =
     Source(1 to 100000)
       .map(_.toString)
-      .map(value => new ProducerRecord[String, String]("topic", value))
+      .map(value => new ProducerRecord[String, String](topic, value))
       .runWith(Producer.plainSink(producerSettings))
 
   implicit val ec: ExecutionContextExecutor = system.dispatcher

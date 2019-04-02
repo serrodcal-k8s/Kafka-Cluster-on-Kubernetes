@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: consumer
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: consumer
+  template:
+    metadata:
+      labels:
+        tier: consumer
+    spec:
+      containers:
+        - name: consumer
+          image: serrodcal/kafka-consumer:0.1.0
+          imagePullPolicy: IfNotPresent
+#          env:
+#          - name: BOOTSTRAPSERVERS
+#            value: "my-kafka:9092"
+#          - name: CONSUMER_GROUP_ID
+#            value: "group1"
