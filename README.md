@@ -310,3 +310,6 @@ Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes
 * [Kubernetes](https://kubernetes.io/)
 * [Helm](https://helm.sh/)
 * [Kafkacat](https://github.com/edenhill/kafkacat)
+* [Maven](https://maven.apache.org/)
+* [Scala](https://www.scala-lang.org/)
+* [Alpakka](https://doc.akka.io/docs/alpakka/current/index.html)
