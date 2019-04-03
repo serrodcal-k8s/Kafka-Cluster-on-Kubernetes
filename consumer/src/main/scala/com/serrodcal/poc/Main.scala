@@ -18,9 +18,6 @@ object Main extends App {
   implicit val system: ActorSystem = ActorSystem("consumer")
   implicit val materializer: Materializer = ActorMaterializer()
 
-  val consumerConfig = config.getConfig("akka.kafka.consumer")
-  val bootstrapServers = config.getString("bootstrapServers")
-
   val consumerSettings =
           ConsumerSettings(system, new StringDeserializer, new StringDeserializer)
 
