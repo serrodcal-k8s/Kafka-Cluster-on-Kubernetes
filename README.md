@@ -300,7 +300,7 @@ foo
 bar
 ```
 
-Create a partitiones topic:
+* Create a partitioned topic:
 
 Get a Zookeeper broker IP:
 
