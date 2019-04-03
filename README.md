@@ -300,9 +300,41 @@ foo
 bar
 ```
 
+Create a partitiones topic:
+
+Get a Zookeeper broker IP:
+
+```bash
+~$ kubectl get pod my-kafka-zookeeper-0 --template={{.status.podIP}}
+```
+
+Copy the IP returned, for example, `10.1.6.29`.
+
+Access to any kafka broker:
+
+```bash
+~$ kubectl exec -ti my-kafka-0 -- bash
+```
+
+Once there, create partitiones (in this case, 3 partitions) providing any zookeeper IP as given below:
+
+```bash
+~$ ./usr/bin/kafka-topics --create --zookeeper 10.1.6.29:2181 --topic my-partitioned-topic --replication-factor 1 --partitions 3
+```
+
+If success, you'll see `Created topic "my-partitioned-topic".`.
+
 ## Running simple consumer and producer
 
 Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md) and [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md)) documentations in order to deploy a simple producer and consumer.
+
+## Running `docker-compose.yml`
+
+Alternatively, run a single kafka and zookeeper broker on Docker Compose:
+
+```bash
+~$ docker-compose.yml
+```
 
 ## Built with
 
