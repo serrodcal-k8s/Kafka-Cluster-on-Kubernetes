@@ -17,9 +17,9 @@ spec:
         - name: consumer
           image: serrodcal/kafka-consumer:0.1.0
           imagePullPolicy: IfNotPresent
-          env:
-          - name: TOPIC
-            value: "topic10"
+#          env:
+#          - name: TOPIC
+#            value: "topic"
 #          - name: BOOTSTRAPSERVERS
 #            value: "my-kafka:9092"
 #          - name: CONSUMER_GROUP_ID
