@@ -20,8 +20,8 @@ object Main extends App {
   implicit val system: ActorSystem = ActorSystem("producer")
   implicit val materializer: Materializer = ActorMaterializer()
 
-  val producerSettings =
-    ProducerSettings(system, new StringSerializer, new StringSerializer)
+  val producerConfigs = config.getConfig("akka.kafka.producer")
+  val producerSettings = ProducerSettings(producerConfigs, new StringSerializer, new StringSerializer)
 
   val topic = config.getString("topic")
 

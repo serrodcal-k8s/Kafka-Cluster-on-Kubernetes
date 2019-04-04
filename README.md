@@ -319,7 +319,7 @@ Access to any kafka broker:
 Once there, create partitiones (in this case, 3 partitions) providing any zookeeper IP as given below:
 
 ```bash
-~$ ./usr/bin/kafka-topics --create --zookeeper 10.1.6.29:2181 --topic my-partitioned-topic --replication-factor 1 --partitions 3
+~$ ./usr/bin/kafka-topics --create --zookeeper 10.1.6.29:2181 --topic topic --replication-factor 1 --partitions 3
 ```
 
 If success, you'll see `Created topic "my-partitioned-topic".`.

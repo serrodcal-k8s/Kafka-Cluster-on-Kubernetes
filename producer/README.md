@@ -26,3 +26,5 @@ go there to get K8s.
 ```bash
 ~$ kubectl logs -f producer
 ```
+
+[Topic config](https://kafka.apache.org/documentation.html#topicconfigs)
