@@ -23,6 +23,8 @@ below scripts running `kubectl config use-context docker-for-desktop`
 
 ### Installing
 
+**NOTE**: Not recommended, but you can start a Kafka using Docker Compose with a single broker as follow: `~$ docker-compose up`.
+
 Add repo to install the chart:
 
 ```bash
@@ -322,19 +324,24 @@ Once there, create partitiones (in this case, 3 partitions) providing any zookee
 ~$ ./usr/bin/kafka-topics --create --zookeeper 10.1.6.29:2181 --topic topic --replication-factor 1 --partitions 3
 ```
 
-If success, you'll see `Created topic "my-partitioned-topic".`.
+If success, you'll see `Created topic "topic"`.
+
+**NOTE**: Delete topic as given below:
+
+```bash
+~$ ./usr/bin/kafka-topics --delete --zookeeper 10.1.6.29:2181 --topic topic
+```
+
+You should see a message as given below:
+
+```bash
+Topic topic is marked for deletion.
+Note: This will have no impact if delete.topic.enable is not set to true.
+```
 
 ## Running simple consumer and producer
 
 Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md) and [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md)) documentations in order to deploy a simple producer and consumer.
-
-## Running `docker-compose.yml`
-
-Alternatively, run a single kafka and zookeeper broker on Docker Compose:
-
-```bash
-~$ docker-compose.yml
-```
 
 ## Built with
 
