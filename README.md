@@ -266,7 +266,7 @@ EOF
 Or, without keys:
 
 ```bash
-~$ kafkacat -P -b my-kafka:9092 -t myTopic <<EOF
+~$ kafkacat -P -b my-kafka:9092 -t topic <<EOF
 foo
 bar
 EOF
@@ -275,7 +275,7 @@ EOF
 In addition, if you want to publish just a message:
 
 ```bash
-~$ echo "foo" | kafkacat -P -b my-kafka:9092 -t myTopic
+~$ echo "foo" | kafkacat -P -b my-kafka:9092 -t topic
 ```
 
 * Consuming messages from a topic
@@ -297,7 +297,7 @@ Partition: 0	Offset: 1
 Or, without keys:
 
 ```bash
-~$ kafkacat -C -b my-kafka:9092 -t myTopic
+~$ kafkacat -C -b my-kafka:9092 -t topic
 foo
 bar
 ```

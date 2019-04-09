@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rest-producer
+  namespace: default
+spec:
+  containers:
+  - name: rest-producer
+    image: serrodcal/kafka-rest-producer:0.1.0
+    imagePullPolicy: IfNotPresent
+#    env:
+#    - name: TOPIC
+#      value: "topic"
+#    - name: BUFFER_SIZE
+#      value: "100"
+#    - name: BOOTSTRAPSERVERS
+#      value: "my-kafka:9092"
+#    - name: PARALLELISM
+#      value: "100"
