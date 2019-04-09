@@ -343,7 +343,7 @@ Note: This will have no impact if delete.topic.enable is not set to true.
 
 Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md) and [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md)) documentations in order to deploy a simple producer and consumer.
 
-Also, you can use [rest-producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/tree/master/rest-producer) (instead of ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md)) beside [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md) to publish message in Kafka by REST.
+Also, you can use [rest-producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/tree/master/rest-producer) (instead of [producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md)) beside [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md) to publish message in Kafka by REST.
 
 ## Built with
 
