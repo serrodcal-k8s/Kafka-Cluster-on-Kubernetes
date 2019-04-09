@@ -353,4 +353,7 @@ Also, you can use [rest-producer](https://github.com/serrodcal/Kafka-Cluster-on-
 * [Kafkacat](https://github.com/edenhill/kafkacat)
 * [Maven](https://maven.apache.org/)
 * [Scala](https://www.scala-lang.org/)
+* [Akka](https://akka.io/)
 * [Alpakka](https://doc.akka.io/docs/alpakka/current/index.html)
+* [Akka Http](https://doc.akka.io/docs/akka-http/current/index.html)
+* [Akka Streams](https://doc.akka.io/docs/akka/current/stream/index.html)
