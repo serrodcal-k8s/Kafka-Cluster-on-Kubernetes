@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: transformer
+  namespace: default
+spec:
+  containers:
+    - name: transformer
+      image: serrodcal/kafka-stream-transformer:0.1.0
+      imagePullPolicy: IfNotPresent
+#    env:
+#    - name: TOPIC_ORIGIN
+#      value: "topic-producer"
+#    - name: TOPIC_DESTINATION
+#      value: "topic-consumer"
+#    - name: BOOTSTRAPSERVERS
+#      value: "my-kafka:9092"
+#    - name: APPLICATION_ID_CONFIG
+#      value: "double-function"
+  restartPolicy: Never
