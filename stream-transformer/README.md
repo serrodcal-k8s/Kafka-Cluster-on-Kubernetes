@@ -70,4 +70,4 @@ ConsumerRecord(topic = topic-consumer, partition = 0, leaderEpoch = 0, offset = 
 ConsumerRecord(topic = topic-consumer, partition = 0, leaderEpoch = 0, offset = 99999, CreateTime = 1556091665275, serialized key size = -1, serialized value size = 6, headers = RecordHeaders(headers = [], isReadOnly = false), key = null, value = 200000)
 ````
 
-
+More info about [DSL-api](https://kafka.apache.org/10/documentation/streams/developer-guide/dsl-api.html)
