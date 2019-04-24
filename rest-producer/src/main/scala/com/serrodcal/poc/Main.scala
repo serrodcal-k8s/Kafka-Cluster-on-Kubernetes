@@ -29,7 +29,7 @@ object Main extends App {
   val topic = config.getString("topic")
 
   // needed for the future flatMap/onComplete in the end
-  implicit val executionContextn = system.dispatcher
+  implicit val executionContext = system.dispatcher
 
   implicit val logger = Logging(system, getClass)
 

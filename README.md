@@ -343,6 +343,8 @@ Note: This will have no impact if delete.topic.enable is not set to true.
 
 Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md) and [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md)) documentations in order to deploy a simple producer and consumer.
 
+Also, you can use [rest-producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/tree/master/rest-producer) (instead of [producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/producer/README.md)) beside [consumer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes/blob/master/consumer/README.md) to publish message in Kafka by REST.
+
 ## Built with
 
 * [Docker](https://www.docker.com/)
@@ -351,4 +353,7 @@ Follow both ([producer](https://github.com/serrodcal/Kafka-Cluster-on-Kubernetes
 * [Kafkacat](https://github.com/edenhill/kafkacat)
 * [Maven](https://maven.apache.org/)
 * [Scala](https://www.scala-lang.org/)
+* [Akka](https://akka.io/)
 * [Alpakka](https://doc.akka.io/docs/alpakka/current/index.html)
+* [Akka Http](https://doc.akka.io/docs/akka-http/current/index.html)
+* [Akka Streams](https://doc.akka.io/docs/akka/current/stream/index.html)
